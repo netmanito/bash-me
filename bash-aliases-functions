@@ -1,0 +1,50 @@
+## bash Functions
+
+## Virtualbox
+startvm() { 
+   VBoxManage startvm '$1' --type=headless 
+   }
+
+stopvm() {
+   VBoxManage controlvm '$1' savestate 
+   }
+
+## Docker
+
+## docker build
+db() { docker build --rm -t="$1" .; }
+
+## enter into container
+function dent {
+docker exec -i -t $1 /bin/bash
+}
+complete -F _docker_exec dent
+
+# run bash for any image
+function dbash {
+docker run --rm -i -t -e TERM=xterm --entrypoint /bin/bash $1
+}
+complete -F _docker_images dbash
+
+## check container network
+#function docknet() { docker inspect $1 -f '{{json .NetworkSettings.Networks }}' }
+
+## Functions
+function cheat() { curl cheat.sh/$1; }
+
+function rhost() {
+    for i in `host $1|grep "has address"|awk '{print $4}'`
+        do
+            host $i|grep pointer|awk '{print "'$i'\t"$5}'
+        done
+}
+
+function dusort() {
+    du -s $1/* | sort -n | cut -f 2- | while read a; do du -sh "$a" ; done
+}
+
+function del-ssh() {
+   sed -i -e $1d ~/.ssh/known_hosts
+}
+## End
+
