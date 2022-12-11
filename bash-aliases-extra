@@ -1,5 +1,21 @@
-## basic helpfull alias
+# Detect OS
+if_os () { [[ $OSTYPE == *$1* ]]; }
+if_nix () { 
+    case "$OSTYPE" in
+        *linux*|*hurd*|*msys*|*cygwin*|*sua*|*interix*) sys="gnu";;
+        *bsd*|*darwin*) sys="bsd";;
+        *sunos*|*solaris*|*indiana*|*illumos*|*smartos*) sys="sun";;
+    esac
+    [[ "${sys}" == "$1" ]];
+}
 
+#if_nix gnu && alias ls='ls --color=auto' && export LS_COLORS="..."
+#if_nix bsd && export CLICOLORS=on && export LSCOLORS="..."
+if_os linux && alias psg="ps -FA | grep" #alternative to pgrep
+if_nix bsd && alias psg="ps -alwx | grep -i" #alternative to pgrep
+if_os darwin && alias finder="open -R"
+
+## basic helpfull alias
 alias ssh='ssh -vC'
 alias pid=' ps aux -ww|cut -d : -f 2'
 alias l='ls -lGh'
@@ -9,12 +25,12 @@ alias la='ls -latrhsGC'
 alias las='ls -ltras'
 alias dir='ls -lGC'
 alias die='killall ssh'
-alias hist='history |grep $1'
+hist() { history |grep "$@"; }
+alias hfix='history -n && history | sort -k2 -k1nr | uniq -f1 | sort -n | cut -c8- > ~/.tmp$$ && history -c && history -r ~/.tmp$$ && history -w && rm ~/.tmp$$' 
 alias fdupe='fdupes -rndfS'
 alias nstat='netstat -antp |grep LISTEN'
 alias fuck='sudo !!'
 alias syslog='tail -f /var/log/syslog'
-alias put='sudo apt-get -y install $1'
 alias hosts='cat ~/.ssh/config |grep Host |grep -iv Name'
 alias Escritorio='cd ~/Desktop'
 alias escritorio='cd ~/Desktop'
@@ -26,20 +42,22 @@ alias c='clear'
 alias e='exit'
 
 ## Virtualbox
-
 alias listvms='VBoxManage list vms'
 
 # apple mac aliases
-alias tmstatus='watch -n2 tmutil status'
-alias flushcache='sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder; say cache flushed'
-alias hideFiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
-alias ShowFiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
-alias finderKill="killall Finder"
+if_os darwin && alias tmstatus='watch -n2 tmutil status'
+if_os darwin && alias flushcache='sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder; say cache flushed'
+if_os darwin && alias hideFiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
+if_os darwin && alias ShowFiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
+if_os darwin && alias finderKill="killall Finder"
+
+# Visual StudioCode
+alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
 
 ## Docker alias
 alias dps='docker ps'
-alias drm='docker rm $1'
-alias dstop='docker stop $1'
+drm() { docker rm "$@"; }
+dstop() { docker stop "$@"; }
 ## killing in the name of 
 ## for i in `docker ps |awk {'print $1'} | grep '[a-z,0-9]'`; do docker stop $i;done
 alias dkill='docker kill $(docker ps -q)'
@@ -57,9 +75,21 @@ alias dki="docker run -t -i -P"
 alias dnames="docker ps | awk '{print $NF}'"
 ## docker images list
 alias dimages="docker images |awk {'print $1,\"- \"$2'}"
+## docker-compose up
+alias dcup='docker-compose up'
+## docker-compose down
+alias dcd='docker-compose down'
+# docker-compose shortcut
+alias dc='docker-compose'
+
+## Git alias
+alias glog='git log --branches --remotes --tags --graph --oneline --decorate --all --abbrev-commit'
+alias grep='grep --color=auto'
+alias gb='git branch'
+alias gs='git status'
+alias gd='git diff'
 
 ## K8 alias
-
 alias getpods="kubectl get pods"
 alias getallpods="kubectl get pods --all-namespaces"
 alias getnodes="kubectl get nodes"

@@ -48,4 +48,4 @@ else
 fi
 
 echo "sourcing bashrc"
-source ~/.bashrc
+source ${HOME}/.bashrc
