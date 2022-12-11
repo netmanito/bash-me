@@ -10,7 +10,7 @@ Some aliases and functions for bash
 
 Run:
 ```
-curl -sL https://raw.githubusercontent.com/netmanito/repo/master/bash-me.sh | bash -
+curl -sL https://raw.githubusercontent.com/netmanito/bash-me/main/bash-me.sh | bash -
 ```
 
 Or download the repository and the run the `bash-me.sh` script.
