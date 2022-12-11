@@ -13,6 +13,8 @@ Run:
 curl -sL https://raw.githubusercontent.com/netmanito/repo/master/bash-me.sh | bash -
 ```
 
+Or download the repository and the run the `bash-me.sh` script.
+
 ## Configure
 
 A new file .bash_me will be created in your home directory 
