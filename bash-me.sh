@@ -60,4 +60,4 @@ else
 fi
 
 echo "sourcing bashrc"
-source ${HOME}/.bashrc
+source "${HOME}"/.bashrc
