@@ -1,13 +1,20 @@
 # Bash Functions
 
+
+function hist() { history |grep "$@"; }
+
+
 ## Virtualbox
-startvm() { VBoxManage startvm "$@" --type=headless; }
-stopvm() { VBoxManage controlvm "$@" savestate; }
+function startvm() { VBoxManage startvm "$@" --type=headless; }
+function stopvm() { VBoxManage controlvm "$@" savestate; }
 
 # Docker
 
+function drm() { docker rm "$@"; }
+function dstop() { docker stop "$@"; }
+
 ## docker build
-db() { docker build --rm -t="$1" .; }
+function db() { docker build --rm -t="$1" .; }
 
 ## enter into container
 function dent { docker exec -i -t "$@" /bin/bash; }

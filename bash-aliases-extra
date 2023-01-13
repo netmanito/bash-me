@@ -25,7 +25,6 @@ alias la='ls -latrhsGC'
 alias las='ls -ltras'
 alias dir='ls -lGC'
 alias die='killall ssh'
-hist() { history |grep "$@"; }
 alias hfix='history -n && history | sort -k2 -k1nr | uniq -f1 | sort -n | cut -c8- > ~/.tmp$$ && history -c && history -r ~/.tmp$$ && history -w && rm ~/.tmp$$' 
 alias fdupe='fdupes -rndfS'
 alias nstat='netstat -antp |grep LISTEN'
@@ -56,8 +55,6 @@ alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/co
 
 ## Docker alias
 alias dps='docker ps'
-drm() { docker rm "$@"; }
-dstop() { docker stop "$@"; }
 ## killing in the name of 
 ## for i in `docker ps |awk {'print $1'} | grep '[a-z,0-9]'`; do docker stop $i;done
 alias dkill='docker kill $(docker ps -q)'
