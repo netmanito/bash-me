@@ -1,0 +1,90 @@
+HOME="/root"
+ENV=$HOME/.bashrc
+export ENV
+SHELL=/bin/bash
+HISTCONTROL=erasedups
+HISTFILESIZE=50000
+HISTSIZE=50000
+shopt -s histappend
+PROMPT_COMMAND="history -a; history -n"
+# HISTIGNORE="ls:clear:[ ]*:cd -:exit:ps aux:* --help:date:cal:date:cd *:cd:sudo su -:die:mount:umount *:"
+GREP_COLOR="0;32"
+export PATH="/usr/local/bin:/sbin:/bin:/usr/bin:/usr/sbin:/opt/X11/bin:/usr/libexec:$HOME/bin"
+export MANPATH=/opt/local/share/man:$MANPATH
+umask 022
+#test -r /sw/bin/init.sh && . /sw/bin/init.sh
+# If running interactively, then:
+if [ -n "$PS1" ]; then
+
+PS1="\[\033[01;31m\]\u@\h \[\033[01;34m\]\w $ \[\033[00m\]";
+fi
+export TERM=xterm-color
+
+## Set specific OS
+### Get os name via uname ###
+# _myos="$(uname)"
+
+### add alias as per os using $_myos ###
+# case $_myos in
+#   Linux) alias foo='/path/to/linux/bin/foo';;
+#   FreeBSD|OpenBSD) alias foo='/path/to/bsd/bin/foo' ;;
+#   SunOS) alias foo='/path/to/sunos/bin/foo' ;;
+#   *) ;;
+# esac
+
+## BASIC ALIAS
+alias c='clear'
+## call alias with a backslash for unalias
+## \c or unalias aliasname
+
+## Colorize the ls output ##
+alias ls='ls --color=auto'
+
+## Use a long listing format ##
+alias ll='ls -la'
+
+## Show hidden files ##
+alias l.='ls -d .* --color=auto'
+
+## get rid of command not found ##
+alias cd..='cd ..'
+
+## a quick way to get out of current directory ##
+alias ..='cd ..'
+alias ...='cd ../../../'
+alias ....='cd ../../../../'
+
+# Make mount command output pretty and human readable format
+alias mount='mount |column -t'
+
+## Colorize the grep command output for ease of use (good for log files)##
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+
+## some helps
+alias path='echo -e ${PATH//:/\\n}'
+alias now='date +"%T'
+alias vi=vim
+alias svi='sudo vi'
+alias su='sudo su -'
+alias wget='wget -c'
+
+# Stop after sending count ECHO_REQUEST packets #
+alias ping='ping -c 5'
+# ports scanning
+alias ports='sudo netstat -tulanp'
+
+## Personal aliases
+    alias ssh='ssh -vC'
+    alias pid=' ps aux -ww|cut -d : -f 2'
+    alias l='ls -lGh'
+    #alias ls=' ls -lhGs'
+    alias ll=' ls -lhaGs'
+    alias asl='ssh -vC moschino'
+    alias la='ls -latrhsGC'
+    alias dir='ls -lGC'
+    alias die='killall ssh'
+    alias hist='history |grep $1'
+    alias copy='rsync -avzPh'
+
