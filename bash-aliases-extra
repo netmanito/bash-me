@@ -11,7 +11,7 @@ if_nix () {
 
 #if_nix gnu && alias ls='ls --color=auto' && export LS_COLORS="..."
 #if_nix bsd && export CLICOLORS=on && export LSCOLORS="..."
-if_os linux && alias psg="ps -FA | grep" #alternative to pgrep
+if_os linux && alias psg="ps -FA | grep" && alias diety="apt-get -y" #alternative to pgrep
 if_nix bsd && alias psg="ps -alwx | grep -i" #alternative to pgrep
 if_os darwin && alias finder="open -R"
 

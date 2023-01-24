@@ -13,6 +13,11 @@ bash_check() {
   return $?
 }
 
+# Create temp file for new bash_me
+# now make a temp file 
+TMP_FILE=$(mktemp -q /tmp/bash_me.XXXXXX)
+trap "rm -f $TMP_FILE" 0 2 3 15
+
 # Install procedure
 if [ -z "$ALIASES" ]; then
         # Check if working from repository or remote execution
@@ -58,6 +63,8 @@ else
         echo   
         if [[ $REPLY =~ ^[Yy]$ ]]
         then
+        TMP_FILE=$(mktemp -q /tmp/bash_me.XXXXXX)
+        trap "rm -f $TMP_FILE" 0 2 3 15
         # Check if files are already downloaded
         if [ ! -f bash-aliases-extra ]; then
             echo "bash-aliases-extra not found, downloading ..."
@@ -67,9 +74,24 @@ else
             echo "bash-aliases-function not found, downloading ..."
             curl -O https://raw.githubusercontent.com/netmanito/bash-me/main/bash-aliases-functions
         fi
-        echo "Updating"
-        cat ./bash-aliases-extra >>~/.bash_me
-        cat ./bash-aliases-functions >>~/.bash_me
+        echo "Updating bash-me"
+        cat ./bash-aliases-extra >> "$TMP_FILE"
+        cat ./bash-aliases-functions >> "$TMP_FILE"
+        differences=$(diff "${HOME}"/.bash_me "$TMP_FILE")
+        if [ ${#differences} -ne 0 ]; then
+            read -p "this will erase the current file, are you sure you want to continue? y/n: " -n 1 -r
+            if [[ $REPLY =~ ^[Yy]$ ]]
+            then
+                echo "Backup old file"
+                mv "${HOME}"/.bash_me{,.old}
+                echo "Updating bash-me with new version"
+                cat "$TMP_FILE" >> "${HOME}"/.bash_me
+            else
+                echo "Aborted"
+            fi
+        else
+            echo "No changes on file, nothing to update."
+        fi
         echo "updating shell"
         if [ "${PWD}" == "${HOME}" ]; then
                 rm "$HOME"/bash-aliases-{extra,functions}
@@ -77,3 +99,5 @@ else
         echo "All Done!!"
         fi
 fi
+
+
