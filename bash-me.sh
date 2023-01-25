@@ -122,8 +122,22 @@ bash-u | u)
                 echo "You're $WHO"
                 if [ -f "${HOME}/.bashrc" ]; then
                         echo ".bashrc found!"
+                        echo "Overwrite ~/.bashrc?"
+                        read -p "this will erase the current file, are you sure you want to continue? y/n: " -n 1 -r
+                        if [[ $REPLY =~ ^[Yy]$ ]]; then
+                                echo "Backup old file"
+                                mv "${HOME}"/.bashrc{,.old}
+                                echo "Updating .bashrc with new version"
+                                cp ./bash-files/bashrc_debian "${HOME}/.bashrc"
+                                echo "Done!"
+                        else
+                                echo "Aborted"
+                        fi
                 else
                         echo ".bashrc NOT found!"
+                        echo "Adding new .bashrc file"
+                        cp ./bash-files/bashrc_debian "${HOME}/.bashrc"
+                        echo "Done!"
                 fi
         else
                 echo "You're root!"
