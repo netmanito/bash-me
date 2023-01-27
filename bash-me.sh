@@ -84,15 +84,15 @@ bash-me | me)
                         # Check if files are already downloaded
                         if [ ! -f bash-files/bash-aliases-extra ]; then
                                 echo "bash-files/bash-aliases-extra not found, downloading ..."
-                                curl -O https://raw.githubusercontent.com/netmanito/bash-me/main/bash-files/bash-aliases-extra
+                                curl -O https://raw.githubusercontent.com/netmanito/bash-me/main/bash-files/bash-aliases-extra >>"$TMP_FILE"
                         fi
                         if [ ! -f bash-files/bash-aliases-functions ]; then
                                 echo "bash-aliases-function not found, downloading ..."
-                                curl -O https://raw.githubusercontent.com/netmanito/bash-me/main/bash-files/bash-aliases-functions
+                                curl -O https://raw.githubusercontent.com/netmanito/bash-me/main/bash-files/bash-aliases-functions >>"$TMP_FILE"
                         fi
                         echo "Updating bash-me"
-                        cat ./bash-files/bash-aliases-extra >>"$TMP_FILE"
-                        cat ./bash-files/bash-aliases-functions >>"$TMP_FILE"
+                        #cat ./bash-files/bash-aliases-extra >>"$TMP_FILE"
+                        #cat ./bash-files/bash-aliases-functions >>"$TMP_FILE"
                         differences=$(diff "${HOME}"/.bash_me "$TMP_FILE")
                         if [ ${#differences} -ne 0 ]; then
                                 read -p "this will erase the current file, are you sure you want to continue? y/n: " -n 1 -r
