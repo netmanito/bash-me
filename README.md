@@ -29,5 +29,6 @@ if [ -f ~/.bash-me ]; then
     source ~/.bash-me
 fi
 ```
+## TODO
 
-
+* Make new options to work from remote url.

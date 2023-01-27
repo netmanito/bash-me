@@ -24,11 +24,6 @@ bash_check() {
         return $?
 }
 
-# Create temp file for new bash-me
-# now make a temp file
-TMP_FILE=$(mktemp -q /tmp/bash-me.XXXXXX)
-trap "rm -f $TMP_FILE" 0 2 3 15
-
 ## variables to work in requests
 COMMAND=$1
 
@@ -37,28 +32,33 @@ case $COMMAND in
 bash-me | me)
         # Install procedure
         if [ -z "$ALIASES" ]; then
+                # Create temp file for new bash-me
+                # now make a temp file
+                TMP_FILE=$(mktemp -q /tmp/bash-me.XXXXXX)
+                trap "rm -f $TMP_FILE" 0 2 3 15
                 # Check if working from repository or remote execution
                 echo "Checking required files"
                 if [ ! -f bash-files/bash-aliases-extra ]; then
                         echo "bash-files/bash-aliases-extra not found, downloading ..."
                         echo "Downloading bash aliases extra"
-                        curl -O https://raw.githubusercontent.com/netmanito/bash-me/main/bash-files/bash-aliases-extra >>"$TMP_FILE"
+                        curl https://raw.githubusercontent.com/netmanito/bash-me/main/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
                 else 
                         echo "..."
                         echo "# bash-me extra functionalities" >~/.bash-me
-                        cat ./bash-files/bash-aliases-extra >>~/.bash-me
+                        cat ./bash-files/bash-aliases-extra.txt >>~/.bash-me
                 fi
                 if [ ! -f bash-files/bash-aliases-functions ]; then
                         echo "bash-files/bash-aliases-functions not found, downloading ..."
                         echo "Downloading bash aliases functions"
-                        curl -O https://raw.githubusercontent.com/netmanito/bash-me/main/bash-files/bash-aliases-functions >>"$TMP_FILE"
+                        curl https://raw.githubusercontent.com/netmanito/bash-me/main/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
                 else
                                         echo "updating bash-me"
-                                        cat ./bash-files/bash-aliases-functions >>~/.bash-me
+                                        cat ./bash-files/bash-aliases-functions.txt >>~/.bash-me
                 fi
                 echo "no .bash-me found, creating it for you"
                 read -r -p "Press ENTER to continue"
                 echo "..."
+                cat "$TMP_FILE" >>"${HOME}"/.bash-me
                 echo "adding bash-me to .bashrc"
                 bash_check
                 if [ $? -eq 0 ]; then
@@ -87,15 +87,17 @@ bash-me | me)
                         # Check if files are already downloaded
                         if [ ! -f bash-files/bash-aliases-extra ]; then
                                 echo "bash-files/bash-aliases-extra not found, downloading ..."
-                                curl -O https://raw.githubusercontent.com/netmanito/bash-me/main/bash-files/bash-aliases-extra >>"$TMP_FILE"
+                                curl https://raw.githubusercontent.com/netmanito/bash-me/main/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
+                        else 
+                                cat ./bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
                         fi
                         if [ ! -f bash-files/bash-aliases-functions ]; then
                                 echo "bash-aliases-function not found, downloading ..."
-                                curl -O https://raw.githubusercontent.com/netmanito/bash-me/main/bash-files/bash-aliases-functions >>"$TMP_FILE"
+                                curl -O https://raw.githubusercontent.com/netmanito/bash-me/main/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
+                        else
+                                cat ./bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
                         fi
                         echo "Updating bash-me"
-                        #cat ./bash-files/bash-aliases-extra >>"$TMP_FILE"
-                        #cat ./bash-files/bash-aliases-functions >>"$TMP_FILE"
                         differences=$(diff "${HOME}"/.bash-me "$TMP_FILE")
                         if [ ${#differences} -ne 0 ]; then
                                 read -p "this will erase the current file, are you sure you want to continue? y/n: " -n 1 -r
