@@ -119,7 +119,7 @@ bash-me | me)
                 fi
         fi
         ;;
-bash-u | -u)
+bash-u | u)
         echo "Setting user .bashrc"
         WHO="$(whoami)"
         if [ "$WHO" != "root" ]; then
@@ -149,7 +149,7 @@ bash-u | -u)
                 echo "Please use bash-me.sh root"
         fi
         ;;
-bash-r | bash-root | root | -r)
+bash-r | bash-root | root | r)
         echo "Setting root .bashrc"
         WHO="$(whoami)"
         if [ "$WHO" == "root" ]; then
@@ -177,7 +177,7 @@ bash-r | bash-root | root | -r)
                 echo "You're not root!"
         fi
         ;;
-update | -up)
+update | up)
         # update bash-me without questions
         if [ -f "${HOME}/.bash-me" ]; then
                 echo ".bash-me found!"
@@ -185,7 +185,7 @@ update | -up)
                 echo "Backing old file"
                 mv "${HOME}"/.bash-me{,.old}
                 echo "Updating bash-me with new version"
-                if [ -f bash-files/bash-aliases-extra ] || [ -f bash-files/bash-aliases-functions ]; then
+                if [ -d bash-files ]; then
                         cat ./bash-files/bash-aliases-extra.txt >>~/.bash-me
                         cat ./bash-files/bash-aliases-functions.txt >>~/.bash-me
                         echo "Done!"
