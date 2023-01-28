@@ -92,7 +92,7 @@ bash-me | me)
                         fi
                         if [ ! -f bash-files/bash-aliases-functions ]; then
                                 echo "bash-aliases-function not found, downloading ..."
-                                curl -O https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
+                                curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
                         else
                                 cat ./bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
                         fi
@@ -196,7 +196,7 @@ update | up)
                         curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
                         echo ""
                         echo "bash-aliases-function not found, downloading ..."
-                        curl -O https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
+                        curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
                         echo "Updating bash-me with new version"
                         cat "$TMP_FILE" >>"${HOME}"/.bash-me
                 fi
@@ -209,7 +209,7 @@ update | up)
                 curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
                 echo ""
                 echo "bash-aliases-function not found, downloading ..."
-                curl -O https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
+                curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
                 echo "Updating bash-me with new version"
                 cat "$TMP_FILE" >>"${HOME}"/.bash-me
         fi
