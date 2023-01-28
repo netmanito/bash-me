@@ -1,1 +1,1 @@
-docker run -v ${PWD}:/bash_me -it bash-me:v0
+docker run -v ${PWD}:/bash_me -it bash-me:latest

@@ -25,6 +25,7 @@ bash_check() {
 }
 
 ## variables to work in requests
+BRANCH="bashrcs"
 COMMAND=$1
 
 # case commands: bash-me, bash-u, bash-r
@@ -35,13 +36,13 @@ bash-me | me)
                 # Create temp file for new bash-me
                 # now make a temp file
                 TMP_FILE=$(mktemp -q /tmp/bash-me.XXXXXX)
-                trap "rm -f $TMP_FILE" 0 2 3 15
+                trap 'rm -f $TMP_FILE' 0 2 3 15
                 # Check if working from repository or remote execution
                 echo "Checking required files"
                 if [ ! -f bash-files/bash-aliases-extra ]; then
                         echo "bash-files/bash-aliases-extra not found, downloading ..."
                         echo "Downloading bash aliases extra"
-                        curl https://raw.githubusercontent.com/netmanito/bash-me/main/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
+                        curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
                 else 
                         echo "..."
                         echo "# bash-me extra functionalities" >~/.bash-me
@@ -50,10 +51,10 @@ bash-me | me)
                 if [ ! -f bash-files/bash-aliases-functions ]; then
                         echo "bash-files/bash-aliases-functions not found, downloading ..."
                         echo "Downloading bash aliases functions"
-                        curl https://raw.githubusercontent.com/netmanito/bash-me/main/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
+                        curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
                 else
-                                        echo "updating bash-me"
-                                        cat ./bash-files/bash-aliases-functions.txt >>~/.bash-me
+                        echo "updating bash-me"
+                        cat ./bash-files/bash-aliases-functions.txt >>~/.bash-me
                 fi
                 echo "no .bash-me found, creating it for you"
                 read -r -p "Press ENTER to continue"
@@ -71,11 +72,11 @@ bash-me | me)
                         echo "    source ~/.bash-me" >>~/.bashrc
                         echo "fi" >>~/.bashrc
                 fi
-                echo "removing process files"
-                if [ "${PWD}" == "${HOME}" ]; then
-                        rm "$HOME"/bash-aliases-{extra,functions}
-                fi
-                echo "All Done!!"
+                # echo "removing process files"
+                # if [ "${PWD}" == "${HOME}" ]; then
+                #         rm "$HOME"/bash-aliases-{extra,functions}
+                # fi
+                # echo "All Done!!"
         else
                 echo ".bash-me found on your home directory"
                 echo "Do you want to update?"
@@ -83,17 +84,17 @@ bash-me | me)
                 echo
                 if [[ $REPLY =~ ^[Yy]$ ]]; then
                         TMP_FILE=$(mktemp -q /tmp/bash-me.XXXXXX)
-                        trap "rm -f $TMP_FILE" 0 2 3 15
+                        trap 'rm -f $TMP_FILE' 0 2 3 15
                         # Check if files are already downloaded
                         if [ ! -f bash-files/bash-aliases-extra ]; then
                                 echo "bash-files/bash-aliases-extra not found, downloading ..."
-                                curl https://raw.githubusercontent.com/netmanito/bash-me/main/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
+                                curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
                         else 
                                 cat ./bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
                         fi
                         if [ ! -f bash-files/bash-aliases-functions ]; then
                                 echo "bash-aliases-function not found, downloading ..."
-                                curl -O https://raw.githubusercontent.com/netmanito/bash-me/main/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
+                                curl -O https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
                         else
                                 cat ./bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
                         fi
@@ -112,10 +113,10 @@ bash-me | me)
                         else
                                 echo "No changes on file, nothing to update."
                         fi
-                        echo "updating shell"
-                        if [ "${PWD}" == "${HOME}" ]; then
-                                rm "$HOME"/bash-aliases-{extra,functions}
-                        fi
+                        # echo "updating shell"
+                        # if [ "${PWD}" == "${HOME}" ]; then
+                        #         rm "$HOME"/bash-aliases-{extra,functions}
+                        # fi
                         echo "All Done!!"
                 fi
         fi
@@ -204,3 +205,4 @@ default | d)
 
 esac
 shift
+exit 0
