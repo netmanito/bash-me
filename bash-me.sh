@@ -24,26 +24,26 @@ bash_check() {
         return $?
 }
 
-## variables to work in requests
+# variables to work in requests
 BRANCH="bashrcs"
 COMMAND=$1
+
+# temp file
+TMP_FILE=$(mktemp -q /tmp/bash-me.XXXXXX)
+trap 'rm -f $TMP_FILE' 0 2 3 15
 
 # case commands: bash-me, bash-u, bash-r
 case $COMMAND in
 bash-me | me)
         # Install procedure
         if [ -z "$ALIASES" ]; then
-                # Create temp file for new bash-me
-                # now make a temp file
-                TMP_FILE=$(mktemp -q /tmp/bash-me.XXXXXX)
-                trap 'rm -f $TMP_FILE' 0 2 3 15
                 # Check if working from repository or remote execution
                 echo "Checking required files"
                 if [ ! -f bash-files/bash-aliases-extra ]; then
                         echo "bash-files/bash-aliases-extra not found, downloading ..."
                         echo "Downloading bash aliases extra"
                         curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
-                else 
+                else
                         echo "..."
                         echo "# bash-me extra functionalities" >~/.bash-me
                         cat ./bash-files/bash-aliases-extra.txt >>~/.bash-me
@@ -83,13 +83,11 @@ bash-me | me)
                 read -p "y/n: " -n 1 -r
                 echo
                 if [[ $REPLY =~ ^[Yy]$ ]]; then
-                        TMP_FILE=$(mktemp -q /tmp/bash-me.XXXXXX)
-                        trap 'rm -f $TMP_FILE' 0 2 3 15
                         # Check if files are already downloaded
                         if [ ! -f bash-files/bash-aliases-extra ]; then
                                 echo "bash-files/bash-aliases-extra not found, downloading ..."
                                 curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
-                        else 
+                        else
                                 cat ./bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
                         fi
                         if [ ! -f bash-files/bash-aliases-functions ]; then
@@ -121,7 +119,7 @@ bash-me | me)
                 fi
         fi
         ;;
-bash-u | u)
+bash-u | -u)
         echo "Setting user .bashrc"
         WHO="$(whoami)"
         if [ "$WHO" != "root" ]; then
@@ -151,7 +149,7 @@ bash-u | u)
                 echo "Please use bash-me.sh root"
         fi
         ;;
-bash-r | bash-root | root | r)
+bash-r | bash-root | root | -r)
         echo "Setting root .bashrc"
         WHO="$(whoami)"
         if [ "$WHO" == "root" ]; then
@@ -179,24 +177,41 @@ bash-r | bash-root | root | r)
                 echo "You're not root!"
         fi
         ;;
-default | d)
-        if [ -f "${HOME}/.bashrc" ]; then
-                echo ".bashrc found!"
-                echo "Overwrite ~/.bashrc?"
-                read -p "this will erase the current file, are you sure you want to continue? y/n: " -n 1 -r
-                if [[ $REPLY =~ ^[Yy]$ ]]; then
-                        echo "Backup old file"
-                        mv "${HOME}"/.bashrc{,.old}
-                        echo "Updating .bashrc with new version"
-                        cp ./bash-files/bashrc_debian "${HOME}/.bashrc"
+update | -up)
+        # update bash-me without questions
+        if [ -f "${HOME}/.bash-me" ]; then
+                echo ".bash-me found!"
+                echo "Overwriting ~/.bash-me?"
+                echo "Backing old file"
+                mv "${HOME}"/.bash-me{,.old}
+                echo "Updating bash-me with new version"
+                if [ -f bash-files/bash-aliases-extra ] || [ -f bash-files/bash-aliases-functions ]; then
+                        cat ./bash-files/bash-aliases-extra.txt >>~/.bash-me
+                        cat ./bash-files/bash-aliases-functions.txt >>~/.bash-me
                         echo "Done!"
                 else
                         echo ""
-                        echo "Aborted"
+                        echo "Downloading files"
+                        echo "bash-files/bash-aliases-extra not found, downloading ..."
+                        curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
+                        echo ""
+                        echo "bash-aliases-function not found, downloading ..."
+                        curl -O https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
+                        echo "Updating bash-me with new version"
+                        cat "$TMP_FILE" >>"${HOME}"/.bash-me
                 fi
         else
-                echo ".bashrc NOT found!"
-                echo "Nothing to do."
+                echo ".bash-me NOT found!"
+                echo "Installing unattended"
+                echo ""
+                echo "Downloading files"
+                echo "bash-files/bash-aliases-extra not found, downloading ..."
+                curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
+                echo ""
+                echo "bash-aliases-function not found, downloading ..."
+                curl -O https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
+                echo "Updating bash-me with new version"
+                cat "$TMP_FILE" >>"${HOME}"/.bash-me
         fi
         ;;
 *)
