@@ -12,7 +12,7 @@ Run:
 ```
 $ curl -sL https://raw.githubusercontent.com/netmanito/bash-me/main/bash-me.sh | bash -
 
-$ curl -sL https://raw.githubusercontent.com/netmanito/bash-me/bashrcs/bash-me.sh | bash -s -- me
+$ curl -sL https://raw.githubusercontent.com/netmanito/bash-me/bashrcs/bash-me.sh | bash -s up
 
 ```
 
@@ -26,10 +26,10 @@ $ ./bash-me.sh me
 
 ### Options
 
-* **me** adds bash aliases and functions in ~/.bash-me file and adds path on ~/.bashrc
-* **u | user** adds a ~/.bashrc for the current user
-* **r | root** adds a ~/.bashrc for the root user
-* **d | default** adds a ~/.bashrc for the current user
+* **me** adds bash aliases and functions in `~/.bashrc` file and adds path on `~/.bashrc`.
+* **u | user** adds a `~/.bashrc` for the current user.
+* **r | root** adds a `~/.bashrc` for the root user.
+* **up | update** adds a `~/.bashrc` with no questions.
 ## Configure
 
 A new file .bash-me will be created in your home directory 

@@ -61,8 +61,8 @@ bash-me | me)
                 echo "..."
                 cat "$TMP_FILE" >>"${HOME}"/.bash-me
                 echo "adding bash-me to .bashrc"
-                bash_check
-                if [ $? -eq 0 ]; then
+                
+                if bash_check ; then
                         echo "bash-me already in .bashrc"
                         echo "No changes needed"
                 else
@@ -71,12 +71,9 @@ bash-me | me)
                         echo "if [ -f ~/.bash-me ]; then" >>~/.bashrc
                         echo "    source ~/.bash-me" >>~/.bashrc
                         echo "fi" >>~/.bashrc
+                        # shellcheck source=/dev/null
+                        source ~/.bashrc
                 fi
-                # echo "removing process files"
-                # if [ "${PWD}" == "${HOME}" ]; then
-                #         rm "$HOME"/bash-aliases-{extra,functions}
-                # fi
-                # echo "All Done!!"
         else
                 echo ".bash-me found on your home directory"
                 echo "Do you want to update?"
@@ -111,10 +108,6 @@ bash-me | me)
                         else
                                 echo "No changes on file, nothing to update."
                         fi
-                        # echo "updating shell"
-                        # if [ "${PWD}" == "${HOME}" ]; then
-                        #         rm "$HOME"/bash-aliases-{extra,functions}
-                        # fi
                         echo "All Done!!"
                 fi
         fi
@@ -220,4 +213,3 @@ update | up)
 
 esac
 shift
-exit 0
