@@ -47,3 +47,9 @@ fi
 * Default option looks equal to user option, maybe remove it. ❌
 * rename bashrc files to txt for let tmp file when installing from remote. ❌
 * rename bash_me to bash-me ✅
+
+## Debian set
+
+```
+$ apt-get install vim vim-scripts screen mc rsync git build-essential zip links arj fdupes apt-file lsof strace htop locate curl
+```

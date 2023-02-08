@@ -155,15 +155,34 @@ bash-r | bash-root | root | r)
                                 echo "Backup old file"
                                 mv "${HOME}"/.bashrc{,.old}
                                 echo "Updating .bashrc with new version"
-                                cp ./bash-files/bashrc_root "${HOME}/.bashrc"
-                                echo "Done!"
+                                if [ -d bash-files ]; then
+                                        cp ./bash-files/bashrc_root "${HOME}/.bashrc"
+                                        echo "Done!"
+                                else
+                                        echo ""
+                                        echo "Downloading files"
+                                        curl -O https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bashrc_root
+                                        mv bashrc_root "${HOME}/.bashrc"
+                                        source "${HOME}/.bashrc"
+                                        echo "Done!"
+                                fi
                         else
                                 echo "Aborted"
                         fi
                 else
                         echo ".bashrc NOT found!"
                         echo "Adding new .bashrc file"
-                        cp ./bash-files/bashrc_root "${HOME}/.bashrc"
+                        if [ -d bash-files ]; then
+                                        cp ./bash-files/bashrc_root "${HOME}/.bashrc"
+                                        echo "Done!"
+                                else
+                                        echo ""
+                                        echo "Downloading files"
+                                        curl -O https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bashrc_root
+                                        mv bashrc_root "${HOME}/.bashrc"
+                                        source "${HOME}/.bashrc"
+                                        echo "Done!"
+                                fi
                         echo "Done!"
                 fi
         else
