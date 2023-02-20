@@ -1,6 +1,6 @@
 #!/bin/bash
 
-USAGE="Usage: $0 <option me | user,u | root,r | default,d >"
+USAGE="Usage: $0 <option me | user,u | update,up >"
 EXAMPLE="Example: $0 me"
 
 if [[ "$#" -lt 1 ]]; then
@@ -61,8 +61,8 @@ bash-me | me)
                 echo "..."
                 cat "$TMP_FILE" >>"${HOME}"/.bash-me
                 echo "adding bash-me to .bashrc"
-                
-                if bash_check ; then
+
+                if bash_check; then
                         echo "bash-me already in .bashrc"
                         echo "No changes needed"
                 else
@@ -108,6 +108,18 @@ bash-me | me)
                         else
                                 echo "No changes on file, nothing to update."
                         fi
+                        if bash_check; then
+                                echo "bash-me already in .bashrc"
+                                echo "No changes needed"
+                        else
+                                echo "bash-me not found in .bashrc"
+                                echo "Configuring ..."
+                                echo "if [ -f ~/.bash-me ]; then" >>~/.bashrc
+                                echo "    source ~/.bash-me" >>~/.bashrc
+                                echo "fi" >>~/.bashrc
+                                # shellcheck source=/dev/null
+                                source ~/.bashrc
+                        fi
                         echo "All Done!!"
                 fi
         fi
@@ -137,15 +149,6 @@ bash-u | u)
                         echo "Done!"
                 fi
         else
-                echo "You're root!"
-                echo ""
-                echo "Please use bash-me.sh root"
-        fi
-        ;;
-bash-r | bash-root | root | r)
-        echo "Setting root .bashrc"
-        WHO="$(whoami)"
-        if [ "$WHO" == "root" ]; then
                 echo "You're $WHO"
                 if [ -f "${HOME}/.bashrc" ]; then
                         echo ".bashrc found!"
@@ -173,20 +176,18 @@ bash-r | bash-root | root | r)
                         echo ".bashrc NOT found!"
                         echo "Adding new .bashrc file"
                         if [ -d bash-files ]; then
-                                        cp ./bash-files/bashrc_root "${HOME}/.bashrc"
-                                        echo "Done!"
-                                else
-                                        echo ""
-                                        echo "Downloading files"
-                                        curl -O https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bashrc_root
-                                        mv bashrc_root "${HOME}/.bashrc"
-                                        source "${HOME}/.bashrc"
-                                        echo "Done!"
-                                fi
+                                cp ./bash-files/bashrc_root "${HOME}/.bashrc"
+                                echo "Done!"
+                        else
+                                echo ""
+                                echo "Downloading files"
+                                curl -O https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bashrc_root
+                                mv bashrc_root "${HOME}/.bashrc"
+                                source "${HOME}/.bashrc"
+                                echo "Done!"
+                        fi
                         echo "Done!"
                 fi
-        else
-                echo "You're not root!"
         fi
         ;;
 update | up)

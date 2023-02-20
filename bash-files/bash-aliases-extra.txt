@@ -72,6 +72,8 @@ alias dki="docker run -t -i -P"
 alias dnames="docker ps | awk '{print $NF}'"
 ## docker images list
 alias dimages="docker images |awk {'print $1,\"- \"$2'}"
+## docker remove unnamed images
+alias dockerfor="for i in `docker images |grep none | awk {'print $3'}`; do docker rmi -f $i; done"
 ## docker-compose up
 alias dcup='docker-compose up'
 ## docker-compose down
