@@ -28,7 +28,6 @@ $ ./bash-me.sh me
 
 * **me** adds bash aliases and functions in `~/.bashrc` file and adds path on `~/.bashrc`.
 * **u | user** adds a `~/.bashrc` for the current user.
-* **r | root** adds a `~/.bashrc` for the root user.
 * **up | update** adds a `~/.bashrc` with no questions.
 ## Configure
 
@@ -44,8 +43,8 @@ fi
 ## TODO
 
 * Make new options to work from remote url. ❌
-* Default option looks equal to user option, maybe remove it. ❌
-* rename bashrc files to txt for let tmp file when installing from remote. ❌
+* Default option looks equal to user option, maybe remove it. ✅
+* rename bashrc files to txt for let tmp file when installing from remote. ✅
 * rename bash_me to bash-me ✅
 
 ## Debian set
