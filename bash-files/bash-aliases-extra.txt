@@ -50,6 +50,9 @@ if_os darwin && alias hideFiles='defaults write com.apple.finder AppleShowAllFil
 if_os darwin && alias ShowFiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
 if_os darwin && alias finderKill="killall Finder"
 
+# Change arch terminal 
+alias arm="env /usr/bin/arch -arm64 /opt/homebrew/bin/bash --login"
+alias intel="env /usr/bin/arch -x86_64 /opt/homebrew/bin/bash --login"
 # Visual StudioCode
 alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
 
@@ -66,16 +69,12 @@ alias dockerclean='docker system prune'
 alias dockerrmi='docker rmi -f $(docker images -q)'
 ## remove all non-running containers
 alias dclean='docker rmi $(docker images --filter dangling=true -q --no-trunc)'
-## run interactive containers
-alias dki="docker run -t -i -P"
 ## docker container names
 alias dnames="docker ps | awk '{print $NF}'"
 ## docker images list
 alias dimages="docker images |awk {'print $1,\"- \"$2'}"
-## docker remove unnamed images
-alias dockerfor="for i in `docker images |grep none | awk {'print $3'}`; do docker rmi -f $i; done"
 ## docker-compose up
-alias dcup='docker-compose up'
+alias dcup='docker-compose up -d'
 ## docker-compose down
 alias dcd='docker-compose down'
 # docker-compose shortcut

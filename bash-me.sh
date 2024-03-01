@@ -1,12 +1,20 @@
 #!/bin/bash
 
-USAGE="Usage: $0 <option me | user,u | update,up >"
+# exit on error
+set -e
+
+
+# Check correct parameters
+USAGE="Usage: $0 <option me | bashrc,rc | update,u >"
+EXPECTED=1
+INTRO=$#
 EXAMPLE="Example: $0 me"
 
-if [[ "$#" -lt 1 ]]; then
+if [[ $INTRO -lt $EXPECTED ]]; then
         echo "ERROR" "Too few arguments. ❌"
-        echo ""
+        echo 
         echo "$USAGE"
+        echo 
         echo "$EXAMPLE"
         exit 1
 fi
@@ -29,12 +37,12 @@ BRANCH="bashrcs"
 COMMAND=$1
 
 # temp file
-TMP_FILE=$(mktemp -q /tmp/bash-me.XXXXXX)
+TMP_FILE=$(mktemp -q "${PWD}"/bash-me.XXXXXX)
 trap 'rm -f $TMP_FILE' 0 2 3 15
 
-# case commands: bash-me, bash-u, bash-r
-case $COMMAND in
-bash-me | me)
+# functions
+
+function dumpBashMeFiles() {
         # Install procedure
         if [ -z "$ALIASES" ]; then
                 # Check if working from repository or remote execution
@@ -42,7 +50,7 @@ bash-me | me)
                 if [ ! -f bash-files/bash-aliases-extra ]; then
                         echo "bash-files/bash-aliases-extra not found, downloading ..."
                         echo "Downloading bash aliases extra"
-                        curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
+                        curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >> "$TMP_FILE"
                 else
                         echo "..."
                         echo "# bash-me extra functionalities" >~/.bash-me
@@ -51,7 +59,7 @@ bash-me | me)
                 if [ ! -f bash-files/bash-aliases-functions ]; then
                         echo "bash-files/bash-aliases-functions not found, downloading ..."
                         echo "Downloading bash aliases functions"
-                        curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
+                        curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >> "$TMP_FILE"
                 else
                         echo "updating bash-me"
                         cat ./bash-files/bash-aliases-functions.txt >>~/.bash-me
@@ -83,15 +91,15 @@ bash-me | me)
                         # Check if files are already downloaded
                         if [ ! -f bash-files/bash-aliases-extra ]; then
                                 echo "bash-files/bash-aliases-extra not found, downloading ..."
-                                curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
+                                curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >> "$TMP_FILE"
                         else
                                 cat ./bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
                         fi
                         if [ ! -f bash-files/bash-aliases-functions ]; then
                                 echo "bash-aliases-function not found, downloading ..."
-                                curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
+                                curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >> "$TMP_FILE"
                         else
-                                cat ./bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
+                                cat ./bash-files/bash-aliases-functions.txt >> "$TMP_FILE"
                         fi
                         echo "Updating bash-me"
                         differences=$(diff "${HOME}"/.bash-me "$TMP_FILE")
@@ -101,7 +109,7 @@ bash-me | me)
                                         echo "Backup old file"
                                         mv "${HOME}"/.bash-me{,.old}
                                         echo "Updating bash-me with new version"
-                                        cat "$TMP_FILE" >>"${HOME}"/.bash-me
+                                        cat "$TMP_FILE" >> "${HOME}"/.bash-me
                                 else
                                         echo "Aborted"
                                 fi
@@ -123,8 +131,9 @@ bash-me | me)
                         echo "All Done!!"
                 fi
         fi
-        ;;
-bash-u | u)
+}
+
+function setNewBashrc() {
         echo "Setting user .bashrc"
         WHO="$(whoami)"
         if [ "$WHO" != "root" ]; then
@@ -135,9 +144,10 @@ bash-u | u)
                         read -p "this will erase the current file, are you sure you want to continue? y/n: " -n 1 -r
                         if [[ $REPLY =~ ^[Yy]$ ]]; then
                                 echo "Backup old file"
-                                mv "${HOME}"/.bashrc{,.old}
+                                mv "${HOME}"/.bashrc{,.orig}
                                 echo "Updating .bashrc with new version"
                                 cp ./bash-files/bashrc_debian "${HOME}/.bashrc"
+                                source "${HOME}/.bashrc"
                                 echo "Done!"
                         else
                                 echo "Aborted"
@@ -146,6 +156,7 @@ bash-u | u)
                         echo ".bashrc NOT found!"
                         echo "Adding new .bashrc file"
                         cp ./bash-files/bashrc_debian "${HOME}/.bashrc"
+                        source "${HOME}/.bashrc"
                         echo "Done!"
                 fi
         else
@@ -156,10 +167,11 @@ bash-u | u)
                         read -p "this will erase the current file, are you sure you want to continue? y/n: " -n 1 -r
                         if [[ $REPLY =~ ^[Yy]$ ]]; then
                                 echo "Backup old file"
-                                mv "${HOME}"/.bashrc{,.old}
+                                mv "${HOME}"/.bashrc{,.orig}
                                 echo "Updating .bashrc with new version"
                                 if [ -d bash-files ]; then
                                         cp ./bash-files/bashrc_root "${HOME}/.bashrc"
+                                        source "${HOME}/.bashrc"
                                         echo "Done!"
                                 else
                                         echo ""
@@ -189,8 +201,9 @@ bash-u | u)
                         echo "Done!"
                 fi
         fi
-        ;;
-update | up)
+}
+
+function updateBashMe() {
         # update bash-me without questions
         if [ -f "${HOME}/.bash-me" ]; then
                 echo ".bash-me found!"
@@ -226,6 +239,28 @@ update | up)
                 echo "Updating bash-me with new version"
                 cat "$TMP_FILE" >>"${HOME}"/.bash-me
         fi
+
+}
+
+# case commands: bash-me, bash-u, bash-r
+case $COMMAND in
+bashme | me)
+        echo 
+        echo "Installing BashMe aliases"
+        dumpBashMeFiles
+        echo 
+        ;;
+bashrc | rc)
+        echo
+        echo "Updating .bashrc file"
+        setNewBashrc
+        echo
+        ;;
+update | u)
+        echo
+        echo "update bashMe"
+        updateBashMe
+        echo
         ;;
 *)
         echo "Fail"

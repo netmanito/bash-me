@@ -50,5 +50,5 @@ fi
 ## Debian set
 
 ```
-$ apt-get install vim vim-scripts screen mc rsync git build-essential zip links arj fdupes apt-file lsof strace htop locate curl
+$ apt-get install vim vim-scripts screen mc rsync git build-essential zip links arj fdupes apt-file lsof strace htop locate curl jq 
 ```

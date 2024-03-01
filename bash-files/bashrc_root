@@ -2,22 +2,21 @@ HOME="/root"
 ENV=$HOME/.bashrc
 export ENV
 SHELL=/bin/bash
-HISTCONTROL=erasedups
-HISTFILESIZE=50000
-HISTSIZE=50000
-shopt -s histappend
-PROMPT_COMMAND="history -a; history -n"
+# Bash history parameters
+export HISTCONTROL=ignoreboth:erasedups
+export HISTSIZE=50000
+PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND "
 # HISTIGNORE="ls:clear:[ ]*:cd -:exit:ps aux:* --help:date:cal:date:cd *:cd:sudo su -:die:mount:umount *:"
 GREP_COLOR="0;32"
-export PATH="/usr/local/bin:/sbin:/bin:/usr/bin:/usr/sbin:/opt/X11/bin:/usr/libexec:$HOME/bin"
+export PATH="/usr/local/bin:/sbin:/bin:/usr/bin:/usr/sbin:/opt/X11/bin:/usr/libexec:$HOME/bin:$PATH"
 export MANPATH=/opt/local/share/man:$MANPATH
 umask 022
-#test -r /sw/bin/init.sh && . /sw/bin/init.sh
+
 # If running interactively, then:
 if [ -n "$PS1" ]; then
-
 PS1="\[\033[01;31m\]\u@\h \[\033[01;34m\]\w $ \[\033[00m\]";
 fi
+
 export TERM=xterm-color
 
 ## Set specific OS
@@ -38,13 +37,23 @@ alias c='clear'
 ## \c or unalias aliasname
 
 ## Colorize the ls output ##
-alias ls='ls --color=auto'
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
+    ## Use a long listing format ##
+    alias ll='ls -lhaGs --color=auto'
+    ## Show hidden files ##
+    alias l.='ls -d .* --color=auto'
+    
+    ## Colorize the grep command output for ease of use (good for log files)##
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
 
-## Use a long listing format ##
-alias ll='ls -la'
-
-## Show hidden files ##
-alias l.='ls -d .* --color=auto'
 
 ## get rid of command not found ##
 alias cd..='cd ..'
@@ -57,17 +66,10 @@ alias ....='cd ../../../../'
 # Make mount command output pretty and human readable format
 alias mount='mount |column -t'
 
-## Colorize the grep command output for ease of use (good for log files)##
-alias grep='grep --color=auto'
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
-
 ## some helps
 alias path='echo -e ${PATH//:/\\n}'
 alias now='date +"%T'
 alias vi=vim
-alias svi='sudo vi'
-alias su='sudo su -'
 alias wget='wget -c'
 
 # Stop after sending count ECHO_REQUEST packets #
@@ -76,15 +78,26 @@ alias ping='ping -c 5'
 alias ports='sudo netstat -tulanp'
 
 ## Personal aliases
-    alias ssh='ssh -vC'
     alias pid=' ps aux -ww|cut -d : -f 2'
     alias l='ls -lGh'
-    #alias ls=' ls -lhGs'
-    alias ll=' ls -lhaGs'
-    alias asl='ssh -vC moschino'
     alias la='ls -latrhsGC'
     alias dir='ls -lGC'
     alias die='killall ssh'
-    alias hist='history |grep $1'
     alias copy='rsync -avzPh'
+    hist() { history |grep "$@"; }
 
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+    . /etc/bash_completion
+fi
