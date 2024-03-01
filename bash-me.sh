@@ -142,7 +142,9 @@ function setNewBashrc() {
                         echo ".bashrc found!"
                         echo "Overwrite ~/.bashrc?"
                         read -p "this will erase the current file, are you sure you want to continue? y/n: " -n 1 -r
+                        echo ""
                         if [[ $REPLY =~ ^[Yy]$ ]]; then
+                                echo ""
                                 echo "Backup old file"
                                 mv "${HOME}"/.bashrc{,.orig}
                                 echo "Updating .bashrc with new version"
@@ -157,6 +159,7 @@ function setNewBashrc() {
                         echo "Adding new .bashrc file"
                         cp ./bash-files/bashrc_debian "${HOME}/.bashrc"
                         source "${HOME}/.bashrc"
+                        echo ""
                         echo "Done!"
                 fi
         else
@@ -165,7 +168,9 @@ function setNewBashrc() {
                         echo ".bashrc found!"
                         echo "Overwrite ~/.bashrc?"
                         read -p "this will erase the current file, are you sure you want to continue? y/n: " -n 1 -r
+                        echo ""
                         if [[ $REPLY =~ ^[Yy]$ ]]; then
+                                echo ""
                                 echo "Backup old file"
                                 mv "${HOME}"/.bashrc{,.orig}
                                 echo "Updating .bashrc with new version"
