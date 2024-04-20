@@ -5,7 +5,7 @@ set -e
 
 
 # Check correct parameters
-USAGE="Usage: $0 <option me | bashrc,rc | update,u >"
+USAGE="Usage: $0 <option me | bashrc,rc | update,u | help,h>"
 EXPECTED=1
 INTRO=$#
 EXAMPLE="Example: $0 me"
@@ -247,6 +247,20 @@ function updateBashMe() {
 
 }
 
+function help() {
+        echo "Help"
+        echo ""
+        echo "Option: me"
+        echo "Install BashMe aliases"
+        echo ""
+        echo "Option: rc"
+        echo "Install new bashrc file"
+        echo ""
+        echo "Option: u"
+        echo "Update bash-me file"
+        echo ""
+}
+
 # case commands: bash-me, bash-u, bash-r
 case $COMMAND in
 bashme | me)
@@ -266,6 +280,11 @@ update | u)
         echo "update bashMe"
         updateBashMe
         echo
+        ;;
+help | h)
+        echo ""
+        help
+        echo ""
         ;;
 *)
         echo "Fail"
