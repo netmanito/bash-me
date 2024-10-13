@@ -1,3 +1,4 @@
+#!/bin/bash
 # Detect OS
 if_os () { [[ $OSTYPE == *$1* ]]; }
 if_nix () { 

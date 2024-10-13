@@ -3,7 +3,6 @@
 # exit on error
 set -e
 
-
 # Check correct parameters
 USAGE="Usage: $0 <option me | bashrc,rc | update,u | help,h>"
 EXPECTED=1
@@ -12,9 +11,9 @@ EXAMPLE="Example: $0 me"
 
 if [[ $INTRO -lt $EXPECTED ]]; then
         echo "ERROR" "Too few arguments. ❌"
-        echo 
+        echo
         echo "$USAGE"
-        echo 
+        echo
         echo "$EXAMPLE"
         exit 1
 fi
@@ -50,7 +49,7 @@ function dumpBashMeFiles() {
                 if [ ! -f bash-files/bash-aliases-extra ]; then
                         echo "bash-files/bash-aliases-extra not found, downloading ..."
                         echo "Downloading bash aliases extra"
-                        curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >> "$TMP_FILE"
+                        curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
                 else
                         echo "..."
                         echo "# bash-me extra functionalities" >~/.bash-me
@@ -59,7 +58,7 @@ function dumpBashMeFiles() {
                 if [ ! -f bash-files/bash-aliases-functions ]; then
                         echo "bash-files/bash-aliases-functions not found, downloading ..."
                         echo "Downloading bash aliases functions"
-                        curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >> "$TMP_FILE"
+                        curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
                 else
                         echo "updating bash-me"
                         cat ./bash-files/bash-aliases-functions.txt >>~/.bash-me
@@ -91,15 +90,15 @@ function dumpBashMeFiles() {
                         # Check if files are already downloaded
                         if [ ! -f bash-files/bash-aliases-extra ]; then
                                 echo "bash-files/bash-aliases-extra not found, downloading ..."
-                                curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >> "$TMP_FILE"
+                                curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
                         else
                                 cat ./bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
                         fi
                         if [ ! -f bash-files/bash-aliases-functions ]; then
                                 echo "bash-aliases-function not found, downloading ..."
-                                curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >> "$TMP_FILE"
+                                curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
                         else
-                                cat ./bash-files/bash-aliases-functions.txt >> "$TMP_FILE"
+                                cat ./bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
                         fi
                         echo "Updating bash-me"
                         differences=$(diff "${HOME}"/.bash-me "$TMP_FILE")
@@ -109,7 +108,7 @@ function dumpBashMeFiles() {
                                         echo "Backup old file"
                                         mv "${HOME}"/.bash-me{,.old}
                                         echo "Updating bash-me with new version"
-                                        cat "$TMP_FILE" >> "${HOME}"/.bash-me
+                                        cat "$TMP_FILE" >>"${HOME}"/.bash-me
                                 else
                                         echo "Aborted"
                                 fi
@@ -264,10 +263,10 @@ function help() {
 # case commands: bash-me, bash-u, bash-r
 case $COMMAND in
 bashme | me)
-        echo 
+        echo
         echo "Installing BashMe aliases"
         dumpBashMeFiles
-        echo 
+        echo
         ;;
 bashrc | rc)
         echo
