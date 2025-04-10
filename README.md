@@ -4,16 +4,14 @@ Bash Me AKA bash-me is a set of aliases and functions useful for my daily work.
 
 Some aliases and functions for bash
 
-
-
 ## Install 
 
 Run:
+
 ```
 $ curl -sL https://raw.githubusercontent.com/netmanito/bash-me/main/bash-me.sh | bash -
 
 $ curl -sL https://raw.githubusercontent.com/netmanito/bash-me/bashrcs/bash-me.sh | bash -s me
-
 ```
 
 Or download the repository and the run the `bash-me.sh` script.
@@ -42,3 +40,7 @@ if [ -f ~/.bash-me ]; then
 fi
 ```
 ## TODO
+
+* bash-me | me 'create and update' works fine (/)
+* bash-me | rc 'install new .bashrc' - review (x)
+* bash-me | destroy 'uninstall bash-me' - todo (x)

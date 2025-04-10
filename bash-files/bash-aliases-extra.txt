@@ -49,7 +49,7 @@ if_os darwin && alias tmstatus='watch -n2 tmutil status'
 if_os darwin && alias flushcache='sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder; say cache flushed'
 if_os darwin && alias hideFiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
 if_os darwin && alias ShowFiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
-if_os darwin && alias finderKill="killall Finder"
+if_os darwin && alias fk="killall Finder"
 
 # Change arch terminal 
 alias arm="env /usr/bin/arch -arm64 /opt/homebrew/bin/bash --login"
@@ -87,6 +87,7 @@ alias grep='grep --color=auto'
 alias gb='git branch'
 alias gs='git status'
 alias gd='git diff'
+alias gp='git pull'
 
 ## K8 alias
 alias getpods="kubectl get pods"
