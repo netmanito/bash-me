@@ -81,120 +81,82 @@ addBashMe() {
     echo "fi" >>~/.bashrc
 }
 
-# Function to update .bash-me
-function updateBashMe() {
-    # update bash-me without questions
-    if [ -f "${HOME}/.bash-me" ]; then
-        echo ".bash-me found!"
-        echo "Overwriting ~/.bash-me?"
-        echo "Backing old file"
-        mv "${HOME}"/.bash-me{,.old}
-        echo "Updating bash-me with new version"
-        if [ -d bash-files ]; then
-            cat ./bash-files/bash-aliases-extra.txt >>~/.bash-me
-            cat ./bash-files/bash-aliases-functions.txt >>~/.bash-me
-            echo "Done!"
-        else
-            echo ""
-            echo "Downloading files"
-            echo "bash-files/bash-aliases-extra not found, downloading ..."
-            curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
-            echo ""
-            echo "bash-aliases-function not found, downloading ..."
-            curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
-            echo "Updating bash-me with new version"
-            cat "$TMP_FILE" >>"${HOME}"/.bash-me
-        fi
-    else
-        echo ".bash-me NOT found!"
-        echo "Installing unattended"
-        echo ""
-        echo "Downloading files"
-        echo "bash-files/bash-aliases-extra not found, downloading ..."
-        curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-extra.txt >>"$TMP_FILE"
-        echo ""
-        echo "bash-aliases-function not found, downloading ..."
-        curl https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bash-aliases-functions.txt >>"$TMP_FILE"
-        echo "Updating bash-me with new version"
-        cat "$TMP_FILE" >>"${HOME}"/.bash-me
-    fi
-
-}
-
 # This script is used to set up a new .bashrc file for the user.
 # It checks if the user is root or not and handles the .bashrc file accordingly.
 # It also provides an option to back up the existing .bashrc file before overwriting it.
 function setNewBashrc() {
-    echo "Setting user .bashrc"
-    WHO="$(whoami)"
-    if [ "$WHO" != "root" ]; then
-        echo "You're $WHO"
-        if [ -f "${HOME}/.bashrc" ]; then
-            echo ".bashrc found!"
-            echo "Overwrite ~/.bashrc?"
-            read -p "this will erase the current file, are you sure you want to continue? y/n: " -n 1 -r
-            echo ""
-            if [[ $REPLY =~ ^[Yy]$ ]]; then
-                echo ""
-                echo "Backup old file"
-                mv "${HOME}"/.bashrc{,.orig}
-                echo "Updating .bashrc with new version"
-                cp ./bash-files/bashrc_debian "${HOME}/.bashrc"
-                source "${HOME}/.bashrc"
-                echo "Done!"
-            else
-                echo "Aborted"
-            fi
-        else
-            echo ".bashrc NOT found!"
-            echo "Adding new .bashrc file"
-            cp ./bash-files/bashrc_debian "${HOME}/.bashrc"
-            source "${HOME}/.bashrc"
-            echo ""
-            echo "Done!"
+    echo "Setting up user .bashrc"
+    local WHO="$(whoami)"
+    local BASHRC_FILE="${HOME}/.bashrc"
+    local BACKUP_FILE="${BASHRC_FILE}.orig"
+    local NEW_BASHRC_FILE
+
+    # Determine the appropriate bashrc file based on user
+    if [ "$WHO" == "root" ]; then
+        NEW_BASHRC_FILE="bashrc_root"
+    else
+        NEW_BASHRC_FILE="bashrc_debian"
+    fi
+
+    # Check if .bashrc exists
+    if [ -f "$BASHRC_FILE" ]; then
+        echo ".bashrc found!"
+        read -p "Overwrite ~/.bashrc? This will change the current file. Are you sure? (y/n): " -n 1 -r
+        echo ""
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo "Aborted."
+            return
+        fi
+
+        # Backup the existing .bashrc
+        echo "Backing up the current .bashrc to $BACKUP_FILE"
+        if ! cp "$BASHRC_FILE" "$BACKUP_FILE"; then
+            echo "Error: Failed to back up .bashrc" >&2
+            return 1
         fi
     else
-        echo "You're $WHO"
-        if [ -f "${HOME}/.bashrc" ]; then
-            echo ".bashrc found!"
-            echo "Overwrite ~/.bashrc?"
-            read -p "this will erase the current file, are you sure you want to continue? y/n: " -n 1 -r
-            echo ""
-            if [[ $REPLY =~ ^[Yy]$ ]]; then
-                echo ""
-                echo "Backup old file"
-                mv "${HOME}"/.bashrc{,.orig}
-                echo "Updating .bashrc with new version"
-                if [ -d bash-files ]; then
-                    cp ./bash-files/bashrc_root "${HOME}/.bashrc"
-                    source "${HOME}/.bashrc"
-                    echo "Done!"
-                else
-                    echo ""
-                    echo "Downloading files"
-                    curl -O https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bashrc_root
-                    mv bashrc_root "${HOME}/.bashrc"
-                    source "${HOME}/.bashrc"
-                    echo "Done!"
-                fi
-            else
-                echo "Aborted"
-            fi
-        else
-            echo ".bashrc NOT found!"
-            echo "Adding new .bashrc file"
-            if [ -d bash-files ]; then
-                cp ./bash-files/bashrc_root "${HOME}/.bashrc"
-                echo "Done!"
-            else
-                echo ""
-                echo "Downloading files"
-                curl -O https://raw.githubusercontent.com/netmanito/bash-me/"$BRANCH"/bash-files/bashrc_root
-                mv bashrc_root "${HOME}/.bashrc"
-                source "${HOME}/.bashrc"
-                echo "Done!"
-            fi
-            echo "Done!"
+        echo ".bashrc not found. A new one will be created."
+    fi
+
+    # Update or download the new .bashrc
+    if [ -d bash-files ]; then
+        echo "Using local bash-files directory."
+        if ! cp "./bash-files/$NEW_BASHRC_FILE" "$BASHRC_FILE"; then
+            echo "Error: Failed to copy $NEW_BASHRC_FILE to $BASHRC_FILE" >&2
+            return 1
         fi
+    else
+        echo "Local bash-files directory not found. Downloading $NEW_BASHRC_FILE..."
+        if ! curl -f -O "https://raw.githubusercontent.com/netmanito/bash-me/$BRANCH/bash-files/$NEW_BASHRC_FILE"; then
+            echo "Error: Failed to download $NEW_BASHRC_FILE" >&2
+            return 1
+        fi
+        mv "$NEW_BASHRC_FILE" "$BASHRC_FILE"
+    fi
+
+    # Source the new .bashrc
+    echo "Sourcing the new .bashrc..."
+    if ! source "$BASHRC_FILE"; then
+        echo "Error: Failed to source $BASHRC_FILE" >&2
+        return 1
+    fi
+
+    echo "Done! Your .bashrc has been updated."
+}
+
+# Function to remove bash-me from .bashrc
+destroyBashMe() {
+    echo "Deleting bash-me"
+    if [ -f "${HOME}/.bash-me" ]; then
+        echo "Deleting .bash-me"
+        rm "${HOME}/.bash-me"
+    else
+        echo ".bash-me not found"
+    fi
+    if bash_check; then
+        echo "Removing bash-me from .bashrc"
+        sed -i '/bash-me/,+1d' "${HOME}"/.bashrc
+    else
+        echo "No changes needed on .bashrc"
     fi
 }

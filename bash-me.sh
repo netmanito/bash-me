@@ -67,7 +67,7 @@ bashrc | rc)
 destroy | d)
         echo
         echo "Deleting bashMe"
-        updateBashMe
+        destroyBashMe
         echo
         ;;
 help | h)
