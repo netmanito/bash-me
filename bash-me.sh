@@ -5,7 +5,7 @@ source common/management.sh
 set -e
 
 # Check correct parameters
-USAGE="Usage: $0 <option me | bashrc,rc | destroy,d | help,h>"
+USAGE="Usage: $0 <option bashme,me | bashrc,rc | destroy,d | help,h>"
 EXPECTED=1
 INTRO=$#
 EXAMPLE="Example: $0 me"
@@ -33,22 +33,6 @@ COMMAND=$1
 # temp file
 TMP_FILE=$(mktemp -q "${PWD}"/bash-me.XXXXXX)
 trap 'rm -f $TMP_FILE' 0 2 3 15
-
-# Help function
-# Print help message
-function help() {
-        echo "Help"
-        echo ""
-        echo "Option: me"
-        echo "Install BashMe aliases"
-        echo ""
-        echo "Option: rc"
-        echo "Install new bashrc file"
-        echo ""
-        echo "Option: u"
-        echo "Update bash-me file"
-        echo ""
-}
 
 # case commands: bash-me, bash-u, bash-r
 case $COMMAND in

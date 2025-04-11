@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# Help function
+# Print help message
+function help() {
+        echo "Help"
+        echo ""
+        echo "Option: me"
+        echo "Install BashMe aliases"
+        echo ""
+        echo "Option: rc"
+        echo "Install new bashrc file"
+        echo ""
+        echo "Option: u"
+        echo "Update bash-me file"
+        echo ""
+}
+
 # Check if bash-me was previously installed
 findBashMe() {
         find ~/ -iname .bash-me

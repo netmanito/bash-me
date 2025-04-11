@@ -38,7 +38,7 @@ function bashMeUpdate() {
     echo "All Done!!"
 }
 
-# Function to dump bash-me files
+# Function to deploy bash-me and add it to .bashrc
 function deployBashMe() {
     # Install procedure
     if [ -z "$ALIASES" ]; then
@@ -57,10 +57,11 @@ function deployBashMe() {
         else
             addBashMe
             echo "BashMe added to .bashrc"
-            echo "Reloading .bashrc"
+            echo "Reload your .bashrc"
             # shellcheck source=/dev/null
-            source ~/.bashrc
-            echo "Done!"
+            echo "Run: source ~/.bashrc"
+            echo "or restart your terminal"
+            echo "All Done!!"
         fi
     else
         echo ".bash-me found on your home directory"
@@ -155,7 +156,7 @@ destroyBashMe() {
     fi
     if bash_check; then
         echo "Removing bash-me from .bashrc"
-        sed -i '/bash-me/,+1d' "${HOME}"/.bashrc
+        sed -i '/bash-me/,+2d' "${HOME}"/.bashrc
     else
         echo "No changes needed on .bashrc"
     fi
