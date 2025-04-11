@@ -1,9 +1,12 @@
 #!/bin/bash
 source ./common/common.sh
 
+## Star of bash-me.sh
+
 # Check if bash-me was previously installed
 ALIASES=$(findBashMe)
 
+# Function to update bash-me
 function bashMeUpdate() {
     # Check if files are already downloaded
     downloadOrUseAliasesExtra
@@ -73,6 +76,7 @@ function deployBashMe() {
         fi
     fi
 }
+
 # Function to add bash-me to .bashrc
 addBashMe() {
     echo "bash-me not found in .bashrc"
@@ -81,6 +85,25 @@ addBashMe() {
     echo "    source ~/.bash-me" >>~/.bashrc
     echo "fi" >>~/.bashrc
 }
+
+# Function to remove bash-me from .bashrc
+destroyBashMe() {
+    echo "Deleting bash-me"
+    if [ -f "${HOME}/.bash-me" ]; then
+        echo "Deleting .bash-me"
+        rm "${HOME}/.bash-me"
+    else
+        echo ".bash-me not found"
+    fi
+    if bash_check; then
+        echo "Removing bash-me from .bashrc"
+        sed -i '/bash-me/,+2d' "${HOME}"/.bashrc
+    else
+        echo "No changes needed on .bashrc"
+    fi
+}
+
+## End of bash-me.sh
 
 # This script is used to set up a new .bashrc file for the user.
 # It checks if the user is root or not and handles the .bashrc file accordingly.
@@ -143,21 +166,4 @@ function setNewBashrc() {
     fi
 
     echo "Done! Your .bashrc has been updated."
-}
-
-# Function to remove bash-me from .bashrc
-destroyBashMe() {
-    echo "Deleting bash-me"
-    if [ -f "${HOME}/.bash-me" ]; then
-        echo "Deleting .bash-me"
-        rm "${HOME}/.bash-me"
-    else
-        echo ".bash-me not found"
-    fi
-    if bash_check; then
-        echo "Removing bash-me from .bashrc"
-        sed -i '/bash-me/,+2d' "${HOME}"/.bashrc
-    else
-        echo "No changes needed on .bashrc"
-    fi
 }
