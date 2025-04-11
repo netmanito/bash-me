@@ -5,25 +5,23 @@ source common/management.sh
 set -e
 
 # Check correct parameters
-USAGE="Usage: $0 <option bashme,me | bashrc,rc | destroy,d | help,h>"
+USAGE="Usage: $0 <option bashme,m | uninstall,u | bashrc,b | help,h>"
 EXPECTED=1
 INTRO=$#
 EXAMPLE="Example: $0 me"
 
 if [[ $INTRO -lt $EXPECTED ]]; then
-        echo "ERROR" "Too few arguments. ❌"
-        echo
-        echo "$USAGE"
-        echo
-        echo "$EXAMPLE"
+        log ERROR "Too few arguments. ❌"
+        log INFO "$USAGE"
+        log INFO "$EXAMPLE"
         exit 1
 fi
 
 
 # Check if bash-me is configured in .bashrc
 bash_check() {
-        grep -q bash-me "${HOME}"/.bashrc
-        return $?
+    grep -q bash-me "${HOME}"/.bashrc
+    return $?
 }
 
 # variables to work in requests
@@ -36,32 +34,26 @@ trap 'rm -f $TMP_FILE' 0 2 3 15
 
 # case commands: bash-me, bash-u, bash-r
 case $COMMAND in
-bashme | me)
-        echo
-        echo "Installing BashMe aliases"
-        deployBashMe
-        echo
-        ;;
-bashrc | rc)
-        echo
-        echo "Updating .bashrc file"
-        setNewBashrc
-        echo
-        ;;
-destroy | d)
-        echo
-        echo "Deleting bashMe"
-        destroyBashMe
-        echo
-        ;;
+bashme | m)
+    log INFO "Installing BashMe aliases"
+    deployBashMe
+    ;;
+bashrc | b)
+    log INFO "Updating .bashrc file"
+    setNewBashrc
+    ;;
+uninstall | d)
+    log INFO "Uninstalling BashMe"
+    destroyBashMe
+    ;;
 help | h)
-        echo ""
-        help
-        echo ""
-        ;;
+    log INFO "Displaying help"
+    help
+    ;;
 *)
-        echo "Fail"
-        ;;
-
+    log ERROR "Invalid command: $COMMAND"
+    echo "$USAGE"
+    exit 1
+    ;;
 esac
 shift

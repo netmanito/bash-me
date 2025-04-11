@@ -8,98 +8,87 @@ ALIASES=$(findBashMe)
 
 # Function to update bash-me
 function bashMeUpdate() {
-    # Check if files are already downloaded
-    downloadOrUseFile "bash-aliases-extra.txt" "bash aliases extra"
-    downloadOrUseFile "bash-aliases-functions.txt" "bash aliases functions"
-    echo "Updating bash-me"
+    log INFO "Updating BashMe"
+    downloadOrUseFile "bash-aliases-extra.bash" "bash aliases extra"
+    downloadOrUseFile "bash-aliases-functions.bash" "bash aliases functions"
     differences=$(diff "${HOME}"/.bash-me "$TMP_FILE")
     if [ ${#differences} -ne 0 ]; then
-        read -p "this will erase the current configuration, are you sure you want to continue? y/n: " -n 1 -r
+        read -p "This will erase the current configuration. Are you sure? (y/n): " -n 1 -r
+        echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then
-            echo "Backup old file"
+            log INFO "Backing up old .bash-me file"
             mv "${HOME}"/.bash-me{,.old}
-            echo "Updating bash-me with new version"
+            log INFO "Updating .bash-me with the new version"
             cat "$TMP_FILE" >>"${HOME}"/.bash-me
         else
-            echo "Aborted"
+            log WARN "Update aborted by user"
         fi
     else
-        echo "No changes on file, nothing to update."
+        log INFO "No changes detected in .bash-me"
     fi
     if bash_check; then
-        echo "bash-me already in .bashrc"
-        echo "No changes needed"
+        log INFO "bash-me already configured in .bashrc"
     else
-        echo "bash-me not found in .bashrc"
-        echo "Configuring ..."
-        echo "if [ -f ~/.bash-me ]; then" >>~/.bashrc
-        echo "    source ~/.bash-me" >>~/.bashrc
-        echo "fi" >>~/.bashrc
-        # shellcheck source=/dev/null
-        source ~/.bashrc
+        log INFO "Adding bash-me to .bashrc"
+        addBashMe
     fi
-    echo "All Done!!"
+    log INFO "All Done!"
 }
 
 # Function to deploy bash-me and add it to .bashrc
 function deployBashMe() {
-    # Install procedure
     if [ -z "$ALIASES" ]; then
-        # Check if working from repository or remote execution
-        echo "Checking required files"
-        downloadOrUseFile "bash-aliases-extra.txt" "bash aliases extra"
-        downloadOrUseFile "bash-aliases-functions.txt" "bash aliases functions"
-        echo "no .bash-me found, creating it for you"
-        read -r -p "Press ENTER to continue"
-        echo "..."
-        cat "$TMP_FILE" >>"${HOME}"/.bash-me
-        echo "adding bash-me to .bashrc"
-        if bash_check; then
-            echo "bash-me already in .bashrc"
-            echo "No changes needed"
-        else
-            addBashMe
-            echo "BashMe added to .bashrc"
-            echo "Reload your .bashrc"
-            # shellcheck source=/dev/null
-            echo "Run: source ~/.bashrc"
-            echo "or restart your terminal"
-            echo "All Done!!"
+        log INFO "📂 No .bash-me found, creating it for you"
+        downloadOrUseFile "bash-aliases-extra.bash" "bash aliases extra"
+        downloadOrUseFile "bash-aliases-functions.bash" "bash aliases functions"
+        log INFO "⚙️ Adding BashMe to .bashrc"
+        read -p "Press Enter to confirm, or any other key to exit: " -n 1 -r
+        echo
+        if [[ ! $REPLY == "" ]]; then
+            log WARN "🚫 Operation aborted by user"
+            exit 1
         fi
+        addBashMe
+        log INFO "✅ BashMe added to .bashrc." 
+        log INFO "🔄 Reload your .bashrc or restart your terminal."
     else
-        echo ".bash-me found on your home directory"
-        echo "Do you want to update?"
-        read -p "y/n: " -n 1 -r
+        log INFO "📁 .bash-me found in your home directory"
+        read -p "❓ Do you want to update? (y/n): " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then
             bashMeUpdate
+        else
+            log WARN "🚫 Update aborted by user"
         fi
     fi
 }
 
 # Function to add bash-me to .bashrc
 addBashMe() {
-    echo "bash-me not found in .bashrc"
-    echo "Configuring ..."
-    echo "if [ -f ~/.bash-me ]; then" >>~/.bashrc
-    echo "    source ~/.bash-me" >>~/.bashrc
-    echo "fi" >>~/.bashrc
+    log INFO "🔍 bash-me not found in .bashrc"
+    log INFO "⚙️ Configuring bash-me in .bashrc..."
+    {
+        echo "if [ -f ~/.bash-me ]; then"
+        echo "    source ~/.bash-me"
+        echo "fi"
+    } >>~/.bashrc
+    log INFO "✅ bash-me successfully added to .bashrc"
 }
 
 # Function to remove bash-me from .bashrc
 destroyBashMe() {
-    echo "Deleting bash-me"
+    log INFO "🗑️ Deleting BashMe"
     if [ -f "${HOME}/.bash-me" ]; then
-        echo "Deleting .bash-me"
+        log INFO "🗂️ Deleting .bash-me file"
         rm "${HOME}/.bash-me"
     else
-        echo ".bash-me not found"
+        log WARN "⚠️ .bash-me file not found"
     fi
     if bash_check; then
-        echo "Removing bash-me from .bashrc"
+        log INFO "📝 Removing bash-me from .bashrc"
         sed -i '/bash-me/,+2d' "${HOME}"/.bashrc
     else
-        echo "No changes needed on .bashrc"
+        log INFO "✅ No changes needed in .bashrc"
     fi
 }
 
@@ -124,46 +113,46 @@ function setNewBashrc() {
 
     # Check if .bashrc exists
     if [ -f "$BASHRC_FILE" ]; then
-        echo ".bashrc found!"
-        read -p "Overwrite ~/.bashrc? This will change the current file. Are you sure? (y/n): " -n 1 -r
+        log INFO "📄 .bashrc found!"
+        read -p "❓ Overwrite ~/.bashrc? This will change the current file. Are you sure? (y/n): " -n 1 -r
         echo ""
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            echo "Aborted."
+            log WARN "🚫 Aborted by user."
             return
         fi
 
         # Backup the existing .bashrc
-        echo "Backing up the current .bashrc to $BACKUP_FILE"
+        log INFO "🗂️ Backing up the current .bashrc to $BACKUP_FILE"
         if ! cp "$BASHRC_FILE" "$BACKUP_FILE"; then
-            echo "Error: Failed to back up .bashrc" >&2
+            log ERROR "❌ Failed to back up .bashrc"
             return 1
         fi
     else
-        echo ".bashrc not found. A new one will be created."
+        log INFO "📄 .bashrc not found. A new one will be created."
     fi
 
     # Update or download the new .bashrc
     if [ -d bash-files ]; then
-        echo "Using local bash-files directory."
+        log INFO "📂 Using local bash-files directory."
         if ! cp "./bash-files/$NEW_BASHRC_FILE" "$BASHRC_FILE"; then
-            echo "Error: Failed to copy $NEW_BASHRC_FILE to $BASHRC_FILE" >&2
+            log ERROR "❌ Failed to copy $NEW_BASHRC_FILE to $BASHRC_FILE"
             return 1
         fi
     else
-        echo "Local bash-files directory not found. Downloading $NEW_BASHRC_FILE..."
+        log WARN "⚠️ Local bash-files directory not found. Downloading $NEW_BASHRC_FILE..."
         if ! curl -f -O "https://raw.githubusercontent.com/netmanito/bash-me/$BRANCH/bash-files/$NEW_BASHRC_FILE"; then
-            echo "Error: Failed to download $NEW_BASHRC_FILE" >&2
+            log ERROR "❌ Failed to download $NEW_BASHRC_FILE"
             return 1
         fi
         mv "$NEW_BASHRC_FILE" "$BASHRC_FILE"
     fi
 
     # Source the new .bashrc
-    echo "Sourcing the new .bashrc..."
+    log INFO "🔄 Sourcing the new .bashrc..."
     if ! source "$BASHRC_FILE"; then
-        echo "Error: Failed to source $BASHRC_FILE" >&2
+        log ERROR "❌ Failed to source $BASHRC_FILE"
         return 1
     fi
 
-    echo "Done! Your .bashrc has been updated."
+    log INFO "✅ Done! Your .bashrc has been updated."
 }

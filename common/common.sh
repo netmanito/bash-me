@@ -1,19 +1,47 @@
 #!/bin/bash
 
+log() {
+    LEVEL=$1
+    shift
+    MESSAGE=$@
+
+    if [[ $SILENT -eq 1 ]] && [[ $SHOW_ERRORS -eq 0 || $LEVEL != "ERROR" ]]; then
+        return 0
+    fi
+
+    case $LEVEL in
+        ERROR)
+            LEVEL="\e[91mERROR\e[0m"
+            ;;
+        INFO)
+            LEVEL=" \e[92mINFO\e[0m"
+            ;;
+        WARN)
+            LEVEL=" \e[93mWARN\e[0m"
+            ;;
+        *)
+            ;;
+    esac
+
+    printf "%s | $LEVEL : %b\n" "$(date)" "$MESSAGE"
+}
+
+
 # Help function
 # Print help message
 function help() {
-        echo "Help"
-        echo ""
-        echo "Option: me"
-        echo "Install BashMe aliases"
-        echo ""
-        echo "Option: rc"
-        echo "Install new bashrc file"
-        echo ""
-        echo "Option: u"
-        echo "Update bash-me file"
-        echo ""
+    log INFO "📘 Help"
+    log INFO ""
+    log INFO "🛠️ Option: bashme, m"
+    log INFO "Install or update BashMe aliases and functions"
+    log INFO ""
+    log INFO "📂 Option: bashrc, b"
+    log INFO "Install new bashrc file"
+    log INFO ""
+    log INFO "❌ Option: uninstall, u"
+    log INFO "Remove .bash-me file"
+    log INFO "Remove references in .bashrc"
+    log INFO ""
 }
 
 # Check if bash-me was previously installed
@@ -27,15 +55,16 @@ downloadOrUseFile() {
     local DESCRIPTION=$2
 
     if [ ! -f "bash-files/$FILE_NAME" ]; then
-        echo "bash-files/$FILE_NAME not found, downloading ..."
-        echo "Downloading $DESCRIPTION"
+        log WARN "bash-files/$FILE_NAME not found, downloading ..."
+        log INFO "Downloading $DESCRIPTION"
         if ! curl -f -o "$TMP_FILE" "https://raw.githubusercontent.com/netmanito/bash-me/$BRANCH/bash-files/$FILE_NAME"; then
-            echo "Error: Failed to download $FILE_NAME" >&2
+            log ERROR "Failed to download $FILE_NAME"
             return 1
         fi
     else
-        echo "Appending $DESCRIPTION to ~/.bash-me"
+        log INFO "Appending $DESCRIPTION to ~/.bash-me"
         cat "bash-files/$FILE_NAME" >>~/.bash-me
+        log INFO "Bash-me file created"
     fi
 }
 
