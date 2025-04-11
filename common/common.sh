@@ -21,6 +21,24 @@ findBashMe() {
         find ~/ -iname .bash-me
 }
 
+# Download or use a file (aliases or functions)
+downloadOrUseFile() {
+    local FILE_NAME=$1
+    local DESCRIPTION=$2
+
+    if [ ! -f "bash-files/$FILE_NAME" ]; then
+        echo "bash-files/$FILE_NAME not found, downloading ..."
+        echo "Downloading $DESCRIPTION"
+        if ! curl -f -o "$TMP_FILE" "https://raw.githubusercontent.com/netmanito/bash-me/$BRANCH/bash-files/$FILE_NAME"; then
+            echo "Error: Failed to download $FILE_NAME" >&2
+            return 1
+        fi
+    else
+        echo "Appending $DESCRIPTION to ~/.bash-me"
+        cat "bash-files/$FILE_NAME" >>~/.bash-me
+    fi
+}
+
 
 # Download and install bash aliases and functions
 downloadOrUseAliasesExtra() {
