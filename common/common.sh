@@ -39,7 +39,8 @@ downloadOrUseFile() {
     fi
 }
 
-
+# ! DEPRECATING - new downloadOrUseFile function replaces this
+# don't remove until all functions are updated
 # Download and install bash aliases and functions
 downloadOrUseAliasesExtra() {
         if [ ! -f bash-files/bash-aliases-extra.txt ]; then

@@ -9,8 +9,8 @@ ALIASES=$(findBashMe)
 # Function to update bash-me
 function bashMeUpdate() {
     # Check if files are already downloaded
-    downloadOrUseAliasesExtra
-    downloadOrUseFunctionsExtra
+    downloadOrUseFile "bash-aliases-extra.txt" "bash aliases extra"
+    downloadOrUseFile "bash-aliases-functions.txt" "bash aliases functions"
     echo "Updating bash-me"
     differences=$(diff "${HOME}"/.bash-me "$TMP_FILE")
     if [ ${#differences} -ne 0 ]; then
@@ -47,8 +47,8 @@ function deployBashMe() {
     if [ -z "$ALIASES" ]; then
         # Check if working from repository or remote execution
         echo "Checking required files"
-        downloadOrUseAliasesExtra
-        downloadOrUseFunctionsExtra
+        downloadOrUseFile "bash-aliases-extra.txt" "bash aliases extra"
+        downloadOrUseFile "bash-aliases-functions.txt" "bash aliases functions"
         echo "no .bash-me found, creating it for you"
         read -r -p "Press ENTER to continue"
         echo "..."
