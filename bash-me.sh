@@ -42,7 +42,7 @@ bashrc | b)
     log INFO "Updating .bashrc file"
     setNewBashrc
     ;;
-uninstall | d)
+uninstall | u)
     log INFO "Uninstalling BashMe"
     destroyBashMe
     ;;

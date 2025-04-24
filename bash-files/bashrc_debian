@@ -99,7 +99,6 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
 fi
 
 # enable bash-me file
-
 if [ -f ~/.bash-me ]; then
     . ~/.bash-me
 fi
