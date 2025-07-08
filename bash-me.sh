@@ -1,7 +1,9 @@
 #!/bin/bash
-source common/common.sh
-source common/management.sh
-# exit on error
+# bash-me.sh - A script to manage BashMe aliases and configurations
+
+# Download and source the script in one line
+source <(curl -s https://raw.githubusercontent.com/netmanito/bash-me/refs/heads/bashrcs/common/common.sh)
+source <(curl -s https://raw.githubusercontent.com/netmanito/bash-me/refs/heads/bashrcs/common/management.sh)# exit on error
 set -e
 
 # Check correct parameters
