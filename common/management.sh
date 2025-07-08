@@ -1,5 +1,5 @@
 #!/bin/bash
-source <(curl -s https://raw.githubusercontent.com/netmanito/bash-me/refs/heads/bashrcs/common/common.sh)
+source ./common/common.sh
 
 ## Star of bash-me.sh
 
