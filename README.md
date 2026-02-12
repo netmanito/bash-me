@@ -33,27 +33,6 @@ cd bash-me
     ```
 * You can also use the `bash` option to install a unified, feature-rich `.bashrc` for any user (including root), based on `bashrc_template.bash`.
 
-## Example: Network scan function
-
-The function `scanlan` is included. It scans a network for live hosts and prints results in a JSON-like format. You can run:
-
-```
-scanlan 192.168.1.0/24
-```
-or just
-```
-scanlan
-```
-and you will be prompted for the network range.
-
-## Uninstall
-
-To remove Bash Me and its configuration:
-
-```
-./bashme.sh uninstall
-```
-
 ## TODO
 
 * Add more aliases and functions.
