@@ -1,1 +1,2 @@
-docker run -v ${PWD}:/bash_me -it bash-me:v0
+docker build -t bash-me:latest . &&
+docker run -v ${PWD}:/root/bash_me -it bash-me:latest

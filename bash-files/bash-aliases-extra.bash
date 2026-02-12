@@ -1,3 +1,4 @@
+#!/bin/bash
 # Detect OS
 if_os () { [[ $OSTYPE == *$1* ]]; }
 if_nix () { 
@@ -15,7 +16,7 @@ if_os linux && alias psg="ps -FA | grep" && alias diety="apt-get -y" #alternativ
 if_nix bsd && alias psg="ps -alwx | grep -i" #alternative to pgrep
 if_os darwin && alias finder="open -R"
 
-## basic helpfull alias
+## Basic helpful alias
 alias ssh='ssh -vC'
 alias pid=' ps aux -ww|cut -d : -f 2'
 alias l='ls -lGh'
@@ -48,8 +49,11 @@ if_os darwin && alias tmstatus='watch -n2 tmutil status'
 if_os darwin && alias flushcache='sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder; say cache flushed'
 if_os darwin && alias hideFiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder /System/Library/CoreServices/Finder.app'
 if_os darwin && alias ShowFiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder /System/Library/CoreServices/Finder.app'
-if_os darwin && alias finderKill="killall Finder"
+if_os darwin && alias fk="killall Finder"
 
+# Change arch terminal 
+alias arm="env /usr/bin/arch -arm64 /opt/homebrew/bin/bash --login"
+alias intel="env /usr/bin/arch -x86_64 /opt/homebrew/bin/bash --login"
 # Visual StudioCode
 alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
 
@@ -66,18 +70,18 @@ alias dockerclean='docker system prune'
 alias dockerrmi='docker rmi -f $(docker images -q)'
 ## remove all non-running containers
 alias dclean='docker rmi $(docker images --filter dangling=true -q --no-trunc)'
-## run interactive containers
-alias dki="docker run -t -i -P"
 ## docker container names
 alias dnames="docker ps | awk '{print $NF}'"
 ## docker images list
 alias dimages="docker images |awk {'print $1,\"- \"$2'}"
 ## docker-compose up
-alias dcup='docker-compose up'
+alias dcup='docker compose up'
+## docker-compose up detached
+alias dcupd='docker compose up -d'
 ## docker-compose down
-alias dcd='docker-compose down'
+alias dcd='docker compose down'
 # docker-compose shortcut
-alias dc='docker-compose'
+alias dc='docker compose'
 
 ## Git alias
 alias glog='git log --branches --remotes --tags --graph --oneline --decorate --all --abbrev-commit'
@@ -85,6 +89,7 @@ alias grep='grep --color=auto'
 alias gb='git branch'
 alias gs='git status'
 alias gd='git diff'
+alias gp='git pull'
 
 ## K8 alias
 alias getpods="kubectl get pods"
